@@ -37,7 +37,7 @@ Ballerina release scripts
     <td class="tg-2fdn"></td>
   </tr>
   <tr>
-    <td class="tg-2fdn">module-ballerina-graphql</td>
+    <td class="tg-2fdn">module-ballerinax-java.jdbc</td>
     <td class="tg-2fdn"></td>
   </tr>
   <tr>
