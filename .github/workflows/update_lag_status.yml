@@ -5,7 +5,7 @@ on:[push]
 
 jobs:
   update-lang-version:
-    name: Update Ballerina Lang Version
+    name: Update Lag Status
     if: github.repository_owner == 'Chamodii'
     runs-on: ubuntu-latest
     steps:
@@ -24,7 +24,7 @@ jobs:
             pip install PyGithub
 
 
-      -   name: Update Ballerina Language Version
+      -   name: Update Lag Status
           run: |
             python dependabot/update_lag_status.py
           env:
