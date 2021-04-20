@@ -1,4 +1,5 @@
 # ballerina-release
+<<<<<<< HEAD
 Ballerina release scripts
 
 
@@ -90,3 +91,6 @@ Ballerina release scripts
   </tr>
 </tbody>
 </table>
+=======
+This repository contains the Ballerina release scripts and release notes.
+>>>>>>> 6a4d25b8571d2d2d2b95054800f90ff6ba69b2b1
