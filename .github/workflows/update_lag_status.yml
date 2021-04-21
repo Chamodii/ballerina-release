@@ -4,7 +4,7 @@ on:[push]
 
 
 jobs:
-  update-lang-version:
+  update-lag-status:
     name: Update Lag Status
     if: github.repository_owner == 'Chamodii'
     runs-on: ubuntu-latest
