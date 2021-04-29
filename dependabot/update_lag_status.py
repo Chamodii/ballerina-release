@@ -142,7 +142,7 @@ def update_modules(updated_readme, module_details_list):
             
             if(pr_number!=None):
                 pr_id = "#" + str(pr_number)
-                pending_pr_link = "https://github.com/ballerina-platform/ballerina-release/pull/" + str(pr_number)
+                pending_pr_link = "https://github.com/ballerina-platform/"+module[MODULE_NAME]+"/pull/" + str(pr_number)
                 ci_status_link = "https://github.com/ballerina-platform/"+module[MODULE_NAME]+"/pulls"
                 ci_status = "[![CI status](https://img.shields.io/github/status/contexts/pulls/ballerina-platform/" + module[MODULE_NAME] + "/" + str(pr_number) + ")](" + ci_status_link + ")"
             pending_pr = "[" + pr_id + "](" + pending_pr_link + ")"
