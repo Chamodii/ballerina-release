@@ -255,57 +255,37 @@ def commit_changes(repo, updated_file, graph_image):
     image = base64.b64encode(graph_image)
 
 
-    # if remote_file_contents == updated_file:
-    #     print("[Info] Branch with the lang version is already present.")
-    # else:
-    current_file = repo.get_contents(README_FILE, ref=branch)
-    
+    if remote_file_contents == updated_file:
+        print("[Info] Branch with the lang version is already present.")
+    else:
+        current_file = repo.get_contents(README_FILE, ref=branch)
+        
 
-    update = repo.update_file(
-        current_file.path,
-        "update readme commit message",
-        updated_file,
-        current_file.sha,
-        branch=branch,
-        author=author
-    )
-
-    
-    # create = repo.create_file("foo.png", "init commit", image)
-
-    update_branch = repo.get_git_ref("heads/" + branch)
-    update_branch.edit(update["commit"].sha, force=True)
-
-    img_file = repo.get_contents("foo.png", ref=branch)
-
-    img_update = repo.update_file(
-        img_file.path,
-        "update image commit message",
-        image,
-        img_file.sha,
-        branch=branch,
-        author=author
-    )
-    update_branch = repo.get_git_ref("heads/" + branch)
-    update_branch.edit(img_update["commit"].sha, force=True)
+        update = repo.update_file(
+            current_file.path,
+            "update readme commit message",
+            updated_file,
+            current_file.sha,
+            branch=branch,
+            author=author
+        )
 
 
+        update_branch = repo.get_git_ref("heads/" + branch)
+        update_branch.edit(update["commit"].sha, force=True)
 
-    # from git import Repo
+        img_file = repo.get_contents("foo.png", ref=branch)
 
-    # repo_dir = 'mathematics'
-    # repo = Repo(repo_dir)
-    # file_list = [
-    #     'foo.png'
-    # ]
-    # commit_message = 'Add simple regression analysis'
-    # repo.index.add(file_list)
-    # repo.index.commit(commit_message)
-    # origin = repo.remote('origin')
-    # origin.push()
-    # upload_image(repo, graph_image)
-
-   
+        img_update = repo.update_file(
+            img_file.path,
+            "update image commit message",
+            image,
+            img_file.sha,
+            branch=branch,
+            author=author
+        )
+        update_branch = repo.get_git_ref("heads/" + branch)
+        update_branch.edit(img_update["commit"].sha, force=True)
 
 def get_readme_file():
     # readMe_repo = github.get_repo(ORGANIZATION + "/ballerina-release")
@@ -351,26 +331,11 @@ updated_readme = readme_file
 get_lang_version()
 module_list = get_module_list()
 
-
 updated_readme = return_updated_readme(readme_file)
-
 
 import matplotlib.pyplot as plt
 
-
-    
-
-# c1 = (226,33,7)
-# c2 = (212, 241, 249)
-# c1 = (60,121,189)
-
-# make_pie([70,30], "70%",[c1,c2])
 img = mpimg.imread("foo.png")
 
 commit_changes(readMe_repo,updated_readme, img)
-
-
-
-
-
 
