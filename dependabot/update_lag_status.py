@@ -27,6 +27,23 @@ MODULE_NAME = "name"
 ballerina_timestamp = ""
 ballerina_lang_version = ""
 
+def main():
+    readMe_repo = github.get_repo(ORGANIZATION + "/ballerina-release")
+
+    readme_file = get_readme_file()
+    updated_readme = readme_file
+
+    get_lang_version()
+    module_list = get_module_list()
+
+    updated_readme = return_updated_readme(readme_file)
+
+    import matplotlib.pyplot as plt
+
+    img = mpimg.imread("repo_status_graph.png")
+
+    commit_changes(readMe_repo,updated_readme, img)
+
 
 def open_url(url):
     request = urllib.request.Request(url)
@@ -35,17 +52,6 @@ def open_url(url):
 
     return urllib.request.urlopen(request)
 
-
-# def get_lang_version():
-#     # Read this from the file that Niveathika would update, for now have the latest version
-#     try:
-#         version_string = open_url(
-#             "https://api.github.com/orgs/ballerina-platform/packages/maven/org.ballerinalang.jballerina-tools/versions").read()
-#     except Exception as e:
-#         print('[Error] Failed to get ballerina packages version', e)
-#         sys.exit(1)
-#     latest_version = json.loads(version_string)[0]
-#     return latest_version["name"]
 
 def get_lang_version():
     global ballerina_lang_version
@@ -115,7 +121,6 @@ def update_modules(updated_readme, module_details_list):
 
     for i in range(last_level):
         current_level = i + 1
-        # global current_level_modules
         current_level_modules = list(filter(lambda s: s['level'] == current_level, module_details_list))
 
         for idx, module in enumerate(current_level_modules):
@@ -124,7 +129,6 @@ def update_modules(updated_readme, module_details_list):
             ci_status = ""
             pr_id = ""
 
-            name_link = ""
             pending_pr_link = ""
             ci_status_link = ""
 
@@ -151,7 +155,6 @@ def update_modules(updated_readme, module_details_list):
             if(idx==0):
                 level = str(current_level)
    
-
             table_row = "| " + level + " | [" + name + "](https://github.com/ballerina-platform/"+module[MODULE_NAME]+") | " + lag_button + " | " + pending_pr + " | " + ci_status + " |"
             updated_readme += table_row + "\n"
     return updated_readme, updated_modules
@@ -176,7 +179,7 @@ def make_pie(val):
 
     kwargs = dict(size=20, fontweight='bold', va='center')
     ax.text(0, 0, text, ha='center', **kwargs)
-    plt.savefig('foo.png')
+    plt.savefig('repo_status_graph.png')
 
 
 def return_updated_readme(readme):
@@ -187,7 +190,6 @@ def return_updated_readme(readme):
 
     module_details_list = all_modules["modules"]
 
-   
     updated_readme += "# Ballerina repositories update status" + "\n"
     declaration  = "ballerina-lang repository version **" +ballerina_lang_version + "** has updates as follows."
     updated_readme += "| <img src=\"foo.png\" width=\"625\" title=\"Repositories updated\"/> | " + declaration + " |"+"\n"
@@ -197,7 +199,6 @@ def return_updated_readme(readme):
     updated_readme += "|:---:|:---:|:---:|:---:|:---:|" + "\n"
 
     updated_readme, updated_modules_number = update_modules(updated_readme, module_details_list)
-    print(updated_modules_number)
     
     updated_readme += "## Modules released to Central" + "\n"
 
@@ -214,53 +215,21 @@ def return_updated_readme(readme):
     return updated_readme
 
 
-def upload_image(repo, image):
-    # contents = repo.get_contents("")
-
-    all_files = []
-    contents = repo.get_contents("", ref="dashboards")
-    while contents:
-        file_content = contents.pop(0)
-        if file_content.type == "dir":
-            contents.extend(repo.get_contents(file_content.path))
-        else:
-            file = file_content
-            all_files.append(str(file).replace('ContentFile(path="','').replace('")',''))
-
-    # with open('/tmp/file.txt', 'r') as file:
-    content = base64.b64encode(image)
-
-    # Upload to github
-    git_prefix = ''
-    git_file = git_prefix + 'foo.png'
-    if git_file in all_files:
-        contents = repo.get_contents(git_file)
-        repo.update_file(contents.path, "committing files", content, contents.sha, branch="dashboards")
-        print(git_file + ' UPDATED')
-    else:
-        repo.create_file(git_file, "committing files", content, branch="dashboards")
-        print(git_file + ' CREATED')
-
-
-
 def commit_changes(repo, updated_file, graph_image):
     author = InputGitAuthor(packageUser, packageEmail)
-    LANG_VERSION_UPDATE_BRANCH = "dashboards"
+    DASHBOARD_UPDATE_BRANCH = "master"
     branch = LANG_VERSION_UPDATE_BRANCH 
     
-    remote_file = repo.get_contents(README_FILE, ref="dashboards")
-    remote_file_contents = remote_file.decoded_content.decode("utf-8")
+    remote_file = repo.get_contents(README_FILE, ref=DASHBOARD_UPDATE_BRANCH)
+    remote_file_contents = remote_file.decoded_content.decode(ENCODING)
 
-    # remote_graph = repo.get_contents("foo.png", ref="dashboards")
     image = base64.b64encode(graph_image)
 
-
     if remote_file_contents == updated_file:
-        print("[Info] Branch with the lang version is already present.")
+        print("[Info] No diff in the README.")
     else:
         current_file = repo.get_contents(README_FILE, ref=branch)
         
-
         update = repo.update_file(
             current_file.path,
             "update readme commit message",
@@ -270,11 +239,10 @@ def commit_changes(repo, updated_file, graph_image):
             author=author
         )
 
-
         update_branch = repo.get_git_ref("heads/" + branch)
         update_branch.edit(update["commit"].sha, force=True)
 
-        img_file = repo.get_contents("foo.png", ref=branch)
+        img_file = repo.get_contents("repo_status_graph.png", ref=branch)
 
         img_update = repo.update_file(
             img_file.path,
@@ -288,10 +256,8 @@ def commit_changes(repo, updated_file, graph_image):
         update_branch.edit(img_update["commit"].sha, force=True)
 
 def get_readme_file():
-    # readMe_repo = github.get_repo(ORGANIZATION + "/ballerina-release")
-
-    readMe_repo = github.get_repo("Chamodii" + "/ballerina-release")
-    readme_file = readMe_repo.get_contents(README_FILE, ref="dashboards")
+    readMe_repo = github.get_repo(ORGANIZATION + "/ballerina-release")
+    readme_file = readMe_repo.get_contents(README_FILE)
     readme_file = readme_file.decoded_content.decode(ENCODING)
 
     return readme_file
@@ -308,10 +274,8 @@ def get_module_list():
     return data
 
 
-def check_pending_pr_checks(module_name):
-   
+def check_pending_pr_checks(module_name): 
     repo = github.get_repo(ORGANIZATION + "/" + module_name)
-
     pulls = repo.get_pulls(state="open")
 
     for pull in pulls:
@@ -323,19 +287,4 @@ def check_pending_pr_checks(module_name):
     return None
 
 
-readMe_repo = github.get_repo("Chamodii" + "/ballerina-release")
-
-readme_file = get_readme_file()
-updated_readme = readme_file
-
-get_lang_version()
-module_list = get_module_list()
-
-updated_readme = return_updated_readme(readme_file)
-
-import matplotlib.pyplot as plt
-
-img = mpimg.imread("foo.png")
-
-commit_changes(readMe_repo,updated_readme, img)
-
+main()
