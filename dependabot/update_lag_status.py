@@ -19,6 +19,7 @@ BALLERINA_LANG_VERSION_FILE = "dependabot/resources/latest_ballerina_lang_versio
 PROPERTIES_FILE = "gradle.properties"
 README_FILE = "README.md"
 LANG_VERSION_KEY = "ballerinaLangVersion"
+BALLERINA_DISTRIBUTION = "ballerina-distribution"
 github = Github(packagePAT)
 
 all_modules = []
@@ -36,16 +37,46 @@ def open_url(url):
     return urllib.request.urlopen(request)
 
 
-# def get_lang_version():
-#     # Read this from the file that Niveathika would update, for now have the latest version
-#     try:
-#         version_string = open_url(
-#             "https://api.github.com/orgs/ballerina-platform/packages/maven/org.ballerinalang.jballerina-tools/versions").read()
-#     except Exception as e:
-#         print('[Error] Failed to get ballerina packages version', e)
-#         sys.exit(1)
-#     latest_version = json.loads(version_string)[0]
-#     return latest_version["name"]
+def get_latest_lang_version():
+    # Read this from the file that Niveathika would update, for now have the latest version
+    try:
+        version_string = open_url(
+            "https://api.github.com/orgs/ballerina-platform/packages/maven/org.ballerinalang.jballerina-tools/versions").read()
+    except Exception as e:
+        print('[Error] Failed to get ballerina packages version', e)
+        sys.exit(1)
+    latest_version = json.loads(version_string)[0]
+    return latest_version["name"]
+
+def get_lang_version_lag():
+    global ballerina_timestamp
+    lag_string=""
+    # try:
+    #     version_string = open_url(
+    #         'https://api.github.com/orgs/ballerina-platform/packages/maven/org.ballerinalang.jballerina-tools/versions').read()
+    #     lang_version = (version_string).split("-")
+    #     timestamp = create_timestamp(lang_version[2], lang_version[3])
+    #     ballerina_lag = timestamp-ballerina_timestamp
+    #     days, hrs = days_hours_minutes(ballerina_lag)
+    #     if(days>0):
+    #         lag_string = format_lag(ballerina_lag)
+    #     else:
+    #         lag_string = str(hrs)+" h"
+
+    # except Exception as e:
+    #     print('[Error] Failed to get ballerina packages version', e)
+    #     sys.exit(1)
+    version_string = get_latest_lang_version()
+    lang_version = (version_string).split("-")
+    timestamp = create_timestamp(lang_version[2], lang_version[3])
+    ballerina_lag = timestamp-ballerina_timestamp
+    days, hrs = days_hours_minutes(ballerina_lag)
+    if(days>0):
+        lag_string = format_lag(ballerina_lag)
+    else:
+        lag_string = str(hrs)+" h"
+
+    return lag_string
 
 def get_lang_version():
     global ballerina_lang_version
@@ -96,7 +127,7 @@ def get_lag_info(module_name):
     ballerina_timestamp = create_timestamp(lang_version[2], lang_version[3])
     update_timestamp = ballerina_timestamp-timestamp
     delta = format_lag(update_timestamp)
-    days = str(delta) + "%20days"
+    days = str(delta)
 
     if(delta==0):
         color = "green"
@@ -135,6 +166,7 @@ def update_modules(updated_readme, module_details_list):
     
 
             lag_status, color = get_lag_info(module[MODULE_NAME])
+            lag_status += "%20days"
             if(color!="red"):
                 updated_modules +=1
             lag_button = "[![Lag](https://img.shields.io/badge/lag-" + lag_status + "-" + color + ")]()"
@@ -189,9 +221,17 @@ def return_updated_readme(readme):
 
    
     updated_readme += "# Ballerina repositories update status" + "\n"
-    declaration  = "ballerina-lang repository version **" +ballerina_lang_version + "** has updates as follows."
-    updated_readme += "| <img src=\"foo.png\" width=\"625\" title=\"Repositories updated\"/> | " + declaration + " |"+"\n"
-    updated_readme += "|:---:|:---|" +"\n"
+    distribution_lag = get_lag_info(BALLERINA_DISTRIBUTION)[0] + " days"
+    ballerina_lang_lag = get_lang_version_lag()
+    
+    distribution_pr_number = check_pending_pr_checks(BALLERINA_DISTRIBUTION)
+    distribution_pr_link = "https://github.com/ballerina-platform/"+BALLERINA_DISTRIBUTION+"/pull/" + str(distribution_pr_number)
+
+    distribution_lag_statement = "ballerina-distribution repository lags by " + distribution_lag + " and pending PR [#" + str(distribution_pr_number) + "](" + distribution_pr_link + ") is available" + "\n"
+    lang_version_statement  = "ballerina-lang repository version **" + ballerina_lang_version + "** ("+ballerina_lang_lag+") has been updated as follows" + "\n"
+    updated_readme += distribution_lag_statement+"<br>"
+    updated_readme += lang_version_statement
+
     updated_readme += "## Modules and Extensions packed in distribution" + "\n"
     updated_readme += "| Level | Modules | Lag Status | Pending PR | Pending PRs CI Status |" + "\n"
     updated_readme += "|:---:|:---:|:---:|:---:|:---:|" + "\n"
@@ -274,18 +314,18 @@ def commit_changes(repo, updated_file, graph_image):
         update_branch = repo.get_git_ref("heads/" + branch)
         update_branch.edit(update["commit"].sha, force=True)
 
-        img_file = repo.get_contents("foo.png", ref=branch)
+        # img_file = repo.get_contents("foo.png", ref=branch)
 
-        img_update = repo.update_file(
-            img_file.path,
-            "update image commit message",
-            image,
-            img_file.sha,
-            branch=branch,
-            author=author
-        )
-        update_branch = repo.get_git_ref("heads/" + branch)
-        update_branch.edit(img_update["commit"].sha, force=True)
+        # img_update = repo.update_file(
+        #     img_file.path,
+        #     "update image commit message",
+        #     image,
+        #     img_file.sha,
+        #     branch=branch,
+        #     author=author
+        # )
+        # update_branch = repo.get_git_ref("heads/" + branch)
+        # update_branch.edit(img_update["commit"].sha, force=True)
 
 def get_readme_file():
     # readMe_repo = github.get_repo(ORGANIZATION + "/ballerina-release")
@@ -315,7 +355,7 @@ def check_pending_pr_checks(module_name):
     pulls = repo.get_pulls(state="open")
 
     for pull in pulls:
-        if("AUTO MERGE" in pull.title):
+        if("Update Dependencies" in pull.title):
             sha = pull.head.sha
             status = repo.get_commit(sha=sha).get_statuses()
             print(status)
