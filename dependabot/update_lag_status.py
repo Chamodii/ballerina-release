@@ -355,7 +355,7 @@ def check_pending_pr_checks(module_name):
     pulls = repo.get_pulls(state="open")
 
     for pull in pulls:
-        if("Update Dependencies" in pull.title):
+        if pull.head.ref == "automated/dependency_version_update":
             sha = pull.head.sha
             status = repo.get_commit(sha=sha).get_statuses()
             print(status)
