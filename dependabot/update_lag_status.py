@@ -45,6 +45,31 @@ def main():
     commit_changes(readMe_repo,updated_readme, img)
 
 
+def get_lang_version_lag():
+    global ballerina_timestamp
+    try:
+        version_string = open_url(
+            'https://api.github.com/orgs/ballerina-platform/packages/maven/org.ballerinalang.jballerina-tools/versions').read()
+        lang_version = (version_string).split("-")
+        timestamp = create_timestamp(lang_version[2], lang_version[3])
+        ballerina_lag = timestamp-ballerina_timestamp
+        days, hrs = days_hours_minutes(ballerina_lag)
+        lag_string=""
+        if(days>0):
+            lag_string = format_lag(ballerina_lag)
+        else:
+            lag_string = str(hrs)+" h"
+
+        return lag_string
+
+    except Exception as e:
+        print('[Error] Failed to get ballerina packages version', e)
+        sys.exit(1)
+    latest_version = json.loads(version_string)[0]
+    
+    return latest_version['name']
+
+
 def open_url(url):
     request = urllib.request.Request(url)
     request.add_header("Accept", "application/vnd.github.v3+json")
@@ -189,11 +214,18 @@ def return_updated_readme(readme):
     all_modules = get_module_list()
 
     module_details_list = all_modules["modules"]
+    distribution_lag = get_lag_info(BALLERINA_DISTRIBUTION)[0]
+
+    ballerina_lang_lag = get_lang_version_lag()
 
     updated_readme += "# Ballerina repositories update status" + "\n"
-    declaration  = "ballerina-lang repository version **" +ballerina_lang_version + "** has updates as follows."
-    updated_readme += "| <img src=\"foo.png\" width=\"625\" title=\"Repositories updated\"/> | " + declaration + " |"+"\n"
-    updated_readme += "|:---:|:---|" +"\n"
+    distribution_pr_number = check_pending_pr_checks(BALLERINA_DISTRIBUTION)
+    distribution_pr_link = "https://github.com/ballerina-platform/"+BALLERINA_DISTRIBUTION+"/pull/" + str(distribution_pr_number)
+
+    distribution_lag_statement = "ballerina-distribution repository lags by " + distribution_lag + "and pending PR [#" + str(distribution_pr_number) + "](" + distribution_pr_link + ") is available"
+    lang_version_statement  = "ballerina-lang repository version **" + ballerina_lang_version + "** ("+ballerina_lang_lag+") has been updated as follows"
+    updated_readme += distribution_lag_statement + "\n"
+    updated_readme += lang_version_statement + "\n"
     updated_readme += "## Modules and Extensions packed in distribution" + "\n"
     updated_readme += "| Level | Modules | Lag Status | Pending PR | Pending PRs CI Status |" + "\n"
     updated_readme += "|:---:|:---:|:---:|:---:|:---:|" + "\n"
@@ -210,7 +242,6 @@ def return_updated_readme(readme):
     updated_readme, updated_modules_number_central = update_modules(updated_readme, central_modules)
     updated_modules_number += updated_modules_number_central
     repositories_updated = round((updated_modules_number/(len(module_details_list)+len(central_modules)))*100)
-    make_pie(repositories_updated)
 
     return updated_readme
 
