@@ -1,201 +1,56 @@
-# ballerina-release
-Ballerina release scripts
-
-<table class="tg">
-<thead>
-  <tr>
-    <th class="tg-dbtv">Repository</th>
-    <th class="tg-dbtv">Status</th>
-  </tr>
-</thead>
-<tbody>
-  <tr>
-    <td class="tg-0pky">module-ballerina-docker</td>
-    <td class="tg-2fdn">0 hours, 0 mins</td>
-  </tr>
-  <tr>
-    <td class="tg-0pky">module-ballerina-io</td>
-    <td class="tg-2fdn">0 hours, 0 mins</td>
-  </tr>
-  <tr>
-    <td class="tg-0pky">module-ballerina-jballerina.java.arrays</td>
-    <td class="tg-2fdn">0 hours, 0 mins</td>
-  </tr>
-  <tr>
-    <td class="tg-0pky">module-ballerina-random</td>
-    <td class="tg-2fdn">0 hours, 0 mins</td>
-  </tr>
-  <tr>
-    <td class="tg-0pky">module-ballerina-regex</td>
-    <td class="tg-2fdn">0 hours, 0 mins</td>
-  </tr>
-  <tr>
-    <td class="tg-0pky">module-ballerina-time</td>
-    <td class="tg-2fdn">0 hours, 0 mins</td>
-  </tr>
-  <tr>
-    <td class="tg-0pky">module-ballerina-url</td>
-    <td class="tg-2fdn">0 hours, 0 mins</td>
-  </tr>
-  <tr>
-    <td class="tg-0pky">module-ballerina-xmldata</td>
-    <td class="tg-2fdn">0 hours, 0 mins</td>
-  </tr>
-  <tr>
-    <td class="tg-0pky">module-ballerina-crypto</td>
-    <td class="tg-2fdn">0 hours, 0 mins</td>
-  </tr>
-  <tr>
-    <td class="tg-0pky">module-ballerinax-datamapper</td>
-    <td class="tg-2fdn">0 hours, 0 mins</td>
-  </tr>
-  <tr>
-    <td class="tg-0pky">module-ballerina-log</td>
-    <td class="tg-2fdn">0 hours, 0 mins</td>
-  </tr>
-  <tr>
-    <td class="tg-0pky">module-ballerina-os</td>
-    <td class="tg-2fdn">0 hours, 0 mins</td>
-  </tr>
-  <tr>
-    <td class="tg-0pky">module-ballerina-task</td>
-    <td class="tg-2fdn">0 hours, 0 mins</td>
-  </tr>
-  <tr>
-    <td class="tg-0pky">module-ballerina-xslt</td>
-    <td class="tg-2fdn">0 hours, 0 mins</td>
-  </tr>
-  <tr>
-    <td class="tg-0pky">module-ballerina-cache</td>
-    <td class="tg-2fdn">0 hours, 0 mins</td>
-  </tr>
-  <tr>
-    <td class="tg-0pky">module-ballerina-file</td>
-    <td class="tg-2fdn">0 hours, 0 mins</td>
-  </tr>
-  <tr>
-    <td class="tg-0pky">module-ballerina-ftp</td>
-    <td class="tg-2fdn">0 hours, 0 mins</td>
-  </tr>
-  <tr>
-    <td class="tg-0pky">module-ballerina-mime</td>
-    <td class="tg-2fdn">0 hours, 0 mins</td>
-  </tr>
-  <tr>
-    <td class="tg-0pky">module-ballerinax-nats</td>
-    <td class="tg-2fdn">0 hours, 0 mins</td>
-  </tr>
-  <tr>
-    <td class="tg-0pky">module-ballerinax-stan</td>
-    <td class="tg-2fdn">0 hours, 0 mins</td>
-  </tr>
-  <tr>
-    <td class="tg-0pky">module-ballerina-tcp</td>
-    <td class="tg-2fdn">0 hours, 0 mins</td>
-  </tr>
-  <tr>
-    <td class="tg-0pky">module-ballerina-udp</td>
-    <td class="tg-2fdn">0 hours, 0 mins</td>
-  </tr>
-  <tr>
-    <td class="tg-0pky">module-ballerina-uuid</td>
-    <td class="tg-2fdn">0 hours, 0 mins</td>
-  </tr>
-  <tr>
-    <td class="tg-0pky">module-ballerina-auth</td>
-    <td class="tg-2fdn">0 hours, 0 mins</td>
-  </tr>
-  <tr>
-    <td class="tg-0pky">module-ballerina-email</td>
-    <td class="tg-2fdn">0 hours, 0 mins</td>
-  </tr>
-  <tr>
-    <td class="tg-0pky">module-ballerina-jwt</td>
-    <td class="tg-2fdn">0 hours, 0 mins</td>
-  </tr>
-  <tr>
-    <td class="tg-0pky">module-ballerina-oauth2</td>
-    <td class="tg-2fdn">0 hours, 0 mins</td>
-  </tr>
-  <tr>
-    <td class="tg-0pky">module-ballerina-http</td>
-    <td class="tg-2fdn">0 hours, 0 mins</td>
-  </tr>
-  <tr>
-    <td class="tg-0pky">module-ballerinax-aws.lambda</td>
-    <td class="tg-2fdn">0 hours, 0 mins</td>
-  </tr>
-  <tr>
-    <td class="tg-0pky">module-ballerinax-azure.functions</td>
-    <td class="tg-2fdn">0 hours, 0 mins</td>
-  </tr>
-  <tr>
-    <td class="tg-0pky">module-ballerina-graphql</td>
-    <td class="tg-2fdn">0 hours, 0 mins</td>
-  </tr>
-  <tr>
-    <td class="tg-0pky">module-ballerina-grpc</td>
-    <td class="tg-2fdn">0 hours, 0 mins</td>
-  </tr>
-  <tr>
-    <td class="tg-0pky">module-ballerinax-jaeger</td>
-    <td class="tg-2fdn">0 hours, 0 mins</td>
-  </tr>
-  <tr>
-    <td class="tg-0pky">ballerina-openapi</td>
-    <td class="tg-2fdn">0 hours, 0 mins</td>
-  </tr>
-  <tr>
-    <td class="tg-0pky">module-ballerinax-prometheus</td>
-    <td class="tg-2fdn">0 hours, 0 mins</td>
-  </tr>
-  <tr>
-    <td class="tg-0pky">module-ballerinai-transaction</td>
-    <td class="tg-2fdn">0 hours, 0 mins</td>
-  </tr>
-  <tr>
-    <td class="tg-0pky">module-ballerina-websocket</td>
-    <td class="tg-2fdn">0 hours, 0 mins</td>
-  </tr>
-  <tr>
-    <td class="tg-0pky">module-ballerina-websub</td>
-    <td class="tg-2fdn">0 hours, 0 mins</td>
-  </tr>
-  <tr>
-    <td class="tg-0pky">module-ballerina-websubhub</td>
-    <td class="tg-2fdn">0 hours, 0 mins</td>
-  </tr>
-  <tr>
-    <td class="tg-0pky">module-ballerina-c2c</td>
-    <td class="tg-2fdn">0 hours, 0 mins</td>
-  </tr>
-  <tr>
-    <td class="tg-0pky">module-ballerinax-choreo</td>
-    <td class="tg-2fdn">0 hours, 0 mins</td>
-  </tr>
-  <tr>
-    <td class="tg-0pky">module-ballerinax-kafka</td>
-    <td class="tg-2fdn">0 hours, 0 mins</td>
-  </tr>
-  <tr>
-    <td class="tg-0pky">module-ballerinax-rabbitmq</td>
-    <td class="tg-2fdn">0 hours, 0 mins</td>
-  </tr>
-  <tr>
-    <td class="tg-0pky">module-ballerina-sql</td>
-    <td class="tg-2fdn">0 hours, 0 mins</td>
-  </tr>
-  <tr>
-    <td class="tg-0pky">ballerina-distribution</td>
-    <td class="tg-2fdn">5 days, 9 hours, 23 mins</td>
-  </tr>
-  <tr>
-    <td class="tg-0pky">module-ballerinax-java.jdbc</td>
-    <td class="tg-2fdn">5 days, 9 hours, 23 mins</td>
-  </tr>
-  <tr>
-    <td class="tg-0pky">module-ballerinax-mysql</td>
-    <td class="tg-2fdn">5 days, 9 hours, 23 mins</td>
-  </tr>
-</tbody>
-</table>
+# Ballerina Repositories Update Status
+`ballerina-distribution` repository is up to date.<br>
+<br>`ballerina-lang` repository version **2.0.0-beta.1-20210506-022400-d44e7336** has been updated as follows
+## Modules and Extensions Packed in Distribution
+| Level | Modules | Lag Status | Pending PR | Pending PRs CI Status |
+|:---:|:---:|:---:|:---:|:---:|
+| 1 | [docker](https://github.com/ballerina-platform/module-ballerina-docker) | [![Lag](https://img.shields.io/badge/lag-0%20days-brightgreen)](#) | []() |  |
+|  | [io](https://github.com/ballerina-platform/module-ballerina-io) | [![Lag](https://img.shields.io/badge/lag-0%20days-brightgreen)](#) | []() |  |
+|  | [jballerina.java.arrays](https://github.com/ballerina-platform/module-ballerina-jballerina.java.arrays) | [![Lag](https://img.shields.io/badge/lag-0%20days-brightgreen)](#) | []() |  |
+|  | [random](https://github.com/ballerina-platform/module-ballerina-random) | [![Lag](https://img.shields.io/badge/lag-0%20days-brightgreen)](#) | []() |  |
+|  | [regex](https://github.com/ballerina-platform/module-ballerina-regex) | [![Lag](https://img.shields.io/badge/lag-0%20days-brightgreen)](#) | []() |  |
+|  | [time](https://github.com/ballerina-platform/module-ballerina-time) | [![Lag](https://img.shields.io/badge/lag-0%20days-brightgreen)](#) | []() |  |
+|  | [url](https://github.com/ballerina-platform/module-ballerina-url) | [![Lag](https://img.shields.io/badge/lag-0%20days-brightgreen)](#) | []() |  |
+|  | [xmldata](https://github.com/ballerina-platform/module-ballerina-xmldata) | [![Lag](https://img.shields.io/badge/lag-0%20days-brightgreen)](#) | []() |  |
+| 2 | [crypto](https://github.com/ballerina-platform/module-ballerina-crypto) | [![Lag](https://img.shields.io/badge/lag-0%20days-brightgreen)](#) | []() |  |
+|  | [datamapper](https://github.com/ballerina-platform/module-ballerinax-datamapper) | [![Lag](https://img.shields.io/badge/lag-0%20days-brightgreen)](#) | []() |  |
+|  | [log](https://github.com/ballerina-platform/module-ballerina-log) | [![Lag](https://img.shields.io/badge/lag-0%20days-brightgreen)](#) | []() |  |
+|  | [os](https://github.com/ballerina-platform/module-ballerina-os) | [![Lag](https://img.shields.io/badge/lag-0%20days-brightgreen)](#) | []() |  |
+|  | [task](https://github.com/ballerina-platform/module-ballerina-task) | [![Lag](https://img.shields.io/badge/lag-0%20days-brightgreen)](#) | []() |  |
+|  | [xslt](https://github.com/ballerina-platform/module-ballerina-xslt) | [![Lag](https://img.shields.io/badge/lag-0%20days-brightgreen)](#) | []() |  |
+| 3 | [cache](https://github.com/ballerina-platform/module-ballerina-cache) | [![Lag](https://img.shields.io/badge/lag-0%20days-brightgreen)](#) | []() |  |
+|  | [file](https://github.com/ballerina-platform/module-ballerina-file) | [![Lag](https://img.shields.io/badge/lag-0%20days-brightgreen)](#) | []() |  |
+|  | [ftp](https://github.com/ballerina-platform/module-ballerina-ftp) | [![Lag](https://img.shields.io/badge/lag-0%20days-brightgreen)](#) | []() |  |
+|  | [mime](https://github.com/ballerina-platform/module-ballerina-mime) | [![Lag](https://img.shields.io/badge/lag-0%20days-brightgreen)](#) | []() |  |
+|  | [nats](https://github.com/ballerina-platform/module-ballerinax-nats) | [![Lag](https://img.shields.io/badge/lag-0%20days-brightgreen)](#) | []() |  |
+|  | [stan](https://github.com/ballerina-platform/module-ballerinax-stan) | [![Lag](https://img.shields.io/badge/lag-0%20days-brightgreen)](#) | []() |  |
+|  | [tcp](https://github.com/ballerina-platform/module-ballerina-tcp) | [![Lag](https://img.shields.io/badge/lag-0%20days-brightgreen)](#) | []() |  |
+|  | [udp](https://github.com/ballerina-platform/module-ballerina-udp) | [![Lag](https://img.shields.io/badge/lag-0%20days-brightgreen)](#) | []() |  |
+|  | [uuid](https://github.com/ballerina-platform/module-ballerina-uuid) | [![Lag](https://img.shields.io/badge/lag-0%20days-brightgreen)](#) | []() |  |
+| 4 | [auth](https://github.com/ballerina-platform/module-ballerina-auth) | [![Lag](https://img.shields.io/badge/lag-0%20days-brightgreen)](#) | []() |  |
+|  | [email](https://github.com/ballerina-platform/module-ballerina-email) | [![Lag](https://img.shields.io/badge/lag-0%20days-brightgreen)](#) | []() |  |
+|  | [jwt](https://github.com/ballerina-platform/module-ballerina-jwt) | [![Lag](https://img.shields.io/badge/lag-0%20days-brightgreen)](#) | []() |  |
+|  | [oauth2](https://github.com/ballerina-platform/module-ballerina-oauth2) | [![Lag](https://img.shields.io/badge/lag-0%20days-brightgreen)](#) | []() |  |
+| 5 | [http](https://github.com/ballerina-platform/module-ballerina-http) | [![Lag](https://img.shields.io/badge/lag-0%20days-brightgreen)](#) | []() |  |
+| 6 | [aws.lambda](https://github.com/ballerina-platform/module-ballerinax-aws.lambda) | [![Lag](https://img.shields.io/badge/lag-0%20days-brightgreen)](#) | []() |  |
+|  | [azure.functions](https://github.com/ballerina-platform/module-ballerinax-azure.functions) | [![Lag](https://img.shields.io/badge/lag-0%20days-brightgreen)](#) | []() |  |
+|  | [graphql](https://github.com/ballerina-platform/module-ballerina-graphql) | [![Lag](https://img.shields.io/badge/lag-0%20days-brightgreen)](#) | []() |  |
+|  | [grpc](https://github.com/ballerina-platform/module-ballerina-grpc) | [![Lag](https://img.shields.io/badge/lag-0%20days-brightgreen)](#) | []() |  |
+|  | [ballerina-openapi](https://github.com/ballerina-platform/ballerina-openapi) | [![Lag](https://img.shields.io/badge/lag-0%20days-brightgreen)](#) | []() |  |
+|  | [transaction](https://github.com/ballerina-platform/module-ballerinai-transaction) | [![Lag](https://img.shields.io/badge/lag-0%20days-brightgreen)](#) | []() |  |
+|  | [websocket](https://github.com/ballerina-platform/module-ballerina-websocket) | [![Lag](https://img.shields.io/badge/lag-0%20days-brightgreen)](#) | []() |  |
+|  | [websub](https://github.com/ballerina-platform/module-ballerina-websub) | [![Lag](https://img.shields.io/badge/lag-0%20days-brightgreen)](#) | []() |  |
+|  | [websubhub](https://github.com/ballerina-platform/module-ballerina-websubhub) | [![Lag](https://img.shields.io/badge/lag-0%20days-brightgreen)](#) | []() |  |
+| 7 | [c2c](https://github.com/ballerina-platform/module-ballerina-c2c) | [![Lag](https://img.shields.io/badge/lag-0%20days-brightgreen)](#) | []() |  |
+|  | [kafka](https://github.com/ballerina-platform/module-ballerinax-kafka) | [![Lag](https://img.shields.io/badge/lag-0%20days-brightgreen)](#) | []() |  |
+|  | [rabbitmq](https://github.com/ballerina-platform/module-ballerinax-rabbitmq) | [![Lag](https://img.shields.io/badge/lag-0%20days-brightgreen)](#) | []() |  |
+|  | [sql](https://github.com/ballerina-platform/module-ballerina-sql) | [![Lag](https://img.shields.io/badge/lag-0%20days-brightgreen)](#) | []() |  |
+| 8 | [java.jdbc](https://github.com/ballerina-platform/module-ballerinax-java.jdbc) | [![Lag](https://img.shields.io/badge/lag-0%20days-brightgreen)](#) | []() |  |
+|  | [mysql](https://github.com/ballerina-platform/module-ballerinax-mysql) | [![Lag](https://img.shields.io/badge/lag-0%20days-brightgreen)](#) | []() |  |
+|  | [ballerina-distribution](https://github.com/ballerina-platform/ballerina-distribution) | [![Lag](https://img.shields.io/badge/lag-0%20days-brightgreen)](#) | []() |  |
+## Modules Released to Central
+| Level | Modules | Lag Status | Pending PR | Pending PRs CI Status |
+|:---:|:---:|:---:|:---:|:---:|
+| 9 | [jaeger](https://github.com/ballerina-platform/module-ballerinax-jaeger) | [![Lag](https://img.shields.io/badge/lag-6%20days-red)](#) | []() |  |
+|  | [prometheus](https://github.com/ballerina-platform/module-ballerinax-prometheus) | [![Lag](https://img.shields.io/badge/lag-6%20days-red)](#) | []() |  |
+|  | [choreo](https://github.com/ballerina-platform/module-ballerinax-choreo) | [![Lag](https://img.shields.io/badge/lag-12.5%20days-red)](#) | [#70](https://github.com/ballerina-platform/module-ballerinax-choreo/pull/70) | [![CI status](https://img.shields.io/github/status/contexts/pulls/ballerina-platform/module-ballerinax-choreo/70)](https://github.com/ballerina-platform/module-ballerinax-choreo/pulls) |
