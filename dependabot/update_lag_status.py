@@ -260,7 +260,7 @@ def return_updated_readme(readme):
     updated_readme, updated_modules_number_central = update_modules(updated_readme, central_modules)
     updated_modules_number += updated_modules_number_central
     repositories_updated = round((updated_modules_number/(len(module_details_list)+len(central_modules)))*100)
-    make_pie(repositories_updated)
+    # make_pie(repositories_updated)
 
     return updated_readme
 
