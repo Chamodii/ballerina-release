@@ -294,7 +294,7 @@ def upload_image(repo, image):
 
 
 
-def commit_changes(repo, updated_file, graph_image):
+def commit_changes(repo, updated_file):
     author = InputGitAuthor(packageUser, packageEmail)
     LANG_VERSION_UPDATE_BRANCH = "dashboards"
     branch = LANG_VERSION_UPDATE_BRANCH 
@@ -303,7 +303,7 @@ def commit_changes(repo, updated_file, graph_image):
     remote_file_contents = remote_file.decoded_content.decode("utf-8")
 
     # remote_graph = repo.get_contents("foo.png", ref="dashboards")
-    image = base64.b64encode(graph_image)
+    # image = base64.b64encode(graph_image)
 
 
     if remote_file_contents == updated_file:
@@ -388,5 +388,5 @@ import matplotlib.pyplot as plt
 
 img = mpimg.imread("foo.png")
 
-commit_changes(readMe_repo,updated_readme, img)
+commit_changes(readMe_repo,updated_readme)
 
