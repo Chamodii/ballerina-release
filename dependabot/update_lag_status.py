@@ -28,6 +28,8 @@ MODULE_NAME = "name"
 ballerina_timestamp = ""
 ballerina_lang_version = ""
 
+import notify_diff
+
 
 def open_url(url):
     request = urllib.request.Request(url)
@@ -72,7 +74,7 @@ def get_lang_version_lag():
     ballerina_lag = timestamp-ballerina_timestamp
     days, hrs = days_hours_minutes(ballerina_lag)
     if(days>0):
-        lag_string = format_lag(ballerina_lag)
+        lag_string = str(format_lag(ballerina_lag))
     else:
         lag_string = str(hrs)+" h"
 
@@ -152,11 +154,9 @@ def update_modules(updated_readme, module_details_list):
         for idx, module in enumerate(current_level_modules):
             name = ""
             pending_pr = ""
-            ci_status = ""
             pr_id = ""
 
             pending_pr_link = ""
-            ci_status_link = ""
 
             if(module[MODULE_NAME].startswith("module")):
                 name = module[MODULE_NAME].split("-")[2]
@@ -322,6 +322,8 @@ def commit_changes(repo, updated_file):
 
         update_branch = repo.get_git_ref("heads/" + branch)
         update_branch.edit(update["commit"].sha, force=True)
+
+        notify_diff.main()
 
         # img_file = repo.get_contents("foo.png", ref=branch)
 
