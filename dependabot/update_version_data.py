@@ -1,54 +1,71 @@
-from github import Github, InputGitAuthor, GithubException
 import json
-import re
-import networkx as nx
-import sys
 import os
-import time
+import sys
 
-BALLERINA_ORG_NAME = "ballerina-platform"
-MODULE_LIST_FILE = "dependabot/resources/module_list.json"
-EXTENSIONS_FILE = "dependabot/resources/extensions.json"
+import networkx as nx
+from github import Github, GithubException
 
-EXTENSIONS_UPDATE_BRANCH = "extensions-update"
+import constants
+import utils
 
-packageUser = os.environ["packageUser"]
-packagePAT = os.environ["packagePAT"]
-packageEmail = os.environ["packageEmail"]
-reviewerPackagePAT = os.environ["reviewerPackagePAT"]
+ballerina_bot_token = os.environ[constants.ENV_BALLERINA_BOT_TOKEN]
 
-github = Github(packagePAT)
+github = Github(ballerina_bot_token)
+
+auto_bump = False
+ballerina_version_regex = ""
 
 
 def main():
     module_name_list = sort_module_name_list()
     print('Fetched module name list')
     module_details_json = initialize_module_details(module_name_list)
-    print('Initialized module details and fetched latest module versions')
+    print('Initialized module details')
     module_details_json = get_immediate_dependents(module_name_list, module_details_json)
     print('Fetched immediate dependents of each module')
     module_details_json = calculate_levels(module_name_list, module_details_json)
     print('Generated module dependency graph and updated module levels')
     module_details_json['modules'].sort(key=lambda s: s['level'])
+    module_details_json = remove_modules_not_included_in_distribution(module_details_json)
+    print('Removed central only modules and updated the list')
     update_json_file(module_details_json)
     print('Updated module details successfully')
-    commit_json_file()
+
+    try:
+        updated_file_content = open(constants.EXTENSIONS_FILE, 'r').read()
+        update = utils.commit_file('ballerina-release',
+                                   constants.EXTENSIONS_FILE, updated_file_content,
+                                   constants.EXTENSIONS_UPDATE_BRANCH,
+                                   '[Automated] Update Extensions Dependencies')
+        if update:
+            utils.open_pr_and_merge('ballerina-release',
+                                    '[Automated] Update Extensions Dependencies',
+                                    'Update dependencies in extensions.json',
+                                    constants.EXTENSIONS_UPDATE_BRANCH)
+        else:
+            print('No changes to ' + constants.EXTENSIONS_FILE + ' file')
+    except GithubException as e:
+        print('Error occurred while committing extensions.json', e)
+        sys.exit(1)
     print("Updated module details in 'ballerina-release' successfully")
 
 
 # Sorts the ballerina extension module list in ascending order
 def sort_module_name_list():
+    global auto_bump
+    global ballerina_version_regex
+
     try:
-        with open(MODULE_LIST_FILE) as f:
+        with open(constants.MODULE_LIST_FILE) as f:
             name_list = json.load(f)
     except Exception as e:
         print('Failed to read module_list.json', e)
         sys.exit()
 
-    name_list['modules'].sort(key=lambda x: x["name"].split('-')[-1])
+    name_list['modules'].sort(key=lambda x: x['name'].split('-')[-1])
 
     try:
-        with open(MODULE_LIST_FILE, 'w') as json_file:
+        with open(constants.MODULE_LIST_FILE, 'w') as json_file:
             json_file.seek(0)
             json.dump(name_list, json_file, indent=4)
             json_file.truncate()
@@ -56,20 +73,26 @@ def sort_module_name_list():
         print('Failed to write to file module_list.json', e)
         sys.exit()
 
+    name_list['modules'].append({
+        'name': 'ballerina-distribution'
+    })
+    auto_bump = name_list['auto_bump']
+    ballerina_version_regex = name_list['lang_version_substring']
+
     return name_list['modules']
 
 
 # Gets dependencies of ballerina extension module from build.gradle file in module repository
 # returns: list of dependencies
 def get_dependencies(module_name):
-    repo = github.get_repo(BALLERINA_ORG_NAME + "/" + module_name)
-    gradle_file = repo.get_contents("build.gradle")
-    data = gradle_file.decoded_content.decode("utf-8")
+    repo = github.get_repo(constants.BALLERINA_ORG_NAME + '/' + module_name)
+    gradle_file = repo.get_contents(constants.BUILD_GRADLE_FILE)
+    data = gradle_file.decoded_content.decode(constants.ENCODING)
 
     dependencies = []
 
     for line in data.splitlines():
-        if 'ballerina-platform/module' in line:
+        if 'https://maven.pkg.github.com/ballerina-platform' in line:
             module = line.split('/')[-1][:-1]
             if module == module_name:
                 continue
@@ -78,38 +101,20 @@ def get_dependencies(module_name):
     return dependencies
 
 
-# Gets the version of the ballerina extension module from gradle.properties file in module repository
-# returns: current version of the module
-def get_version(module_name):
-    repo = github.get_repo(BALLERINA_ORG_NAME + "/" + module_name)
-    properties_file = repo.get_contents("gradle.properties")
-    data = properties_file.decoded_content.decode("utf-8")
-
-    version = ''
-    for line in data.splitlines():
-        if re.match('version=', line):
-            version = line.split('=')[-1]
-
-    if version == '':
-        print('Version not defined for ' + module_name)
-
-    return version
-
-
 # Gets the default branch of the extension repository
 # returns: default branch name
 def get_default_branch(module_name):
     try:
-        repo = github.get_repo(BALLERINA_ORG_NAME + "/" + module_name)
+        repo = github.get_repo(constants.BALLERINA_ORG_NAME + '/' + module_name)
         return repo.default_branch
     except Exception as e:
         print('Failed to get repo details for ' + module_name, e)
-        return ""
+        return ''
 
 
 # Calculates the longest path between source and destination modules and replaces dependents that have intermediates
-def remove_modules_in_intermediate_paths(G, source, destination, successors, module_details_json):
-    longest_path = max(nx.all_simple_paths(G, source, destination), key=lambda x: len(x))
+def remove_modules_in_intermediate_paths(g, source, destination, successors, module_details_json):
+    longest_path = max(nx.all_simple_paths(g, source, destination), key=lambda x: len(x))
 
     for n in longest_path[1:-1]:
         if n in successors:
@@ -125,24 +130,24 @@ def remove_modules_in_intermediate_paths(G, source, destination, successors, mod
 # Returns a json string with updated level of each module
 def calculate_levels(module_name_list, module_details_json):
     try:
-        G = nx.DiGraph()
+        g = nx.DiGraph()
     except Exception as e:
         print('Error generating graph', e)
         sys.exit()
 
     # Module names are used to create the nodes and the level attribute of the node is initialized to 0
     for module in module_name_list:
-        G.add_node(module["name"], level=1)
+        g.add_node(module['name'], level=1)
 
     # Edges are created considering the dependents of each module
     for module in module_details_json['modules']:
         for dependent in module['dependents']:
-            G.add_edge(module['name'], dependent)
+            g.add_edge(module['name'], dependent)
 
     processing_list = []
 
     # Nodes with in degrees=0 and out degrees!=0 are marked as level 1 and the node is appended to the processing list
-    for root in [node for node in G if G.in_degree(node) == 0 and G.out_degree(node) != 0]:
+    for root in [node for node in g if g.in_degree(node) == 0 and g.out_degree(node) != 0]:
         processing_list.append(root)
 
     # While the processing list is not empty, successors of each node in the current level are determined
@@ -155,18 +160,18 @@ def calculate_levels(module_name_list, module_details_json):
         temp = []
         for node in processing_list:
             successors = []
-            for i in G.successors(node):
+            for i in g.successors(node):
                 successors.append(i)
             for successor in successors:
-                remove_modules_in_intermediate_paths(G, node, successor, successors, module_details_json)
-                G.nodes[successor]['level'] = level
+                remove_modules_in_intermediate_paths(g, node, successor, successors, module_details_json)
+                g.nodes[successor]['level'] = level
                 if successor not in temp:
                     temp.append(successor)
         processing_list = temp
         level = level + 1
 
     for module in module_details_json['modules']:
-        module['level'] = G.nodes[module['name']]['level']
+        module['level'] = g.nodes[module['name']]['level']
 
     return module_details_json
 
@@ -174,7 +179,7 @@ def calculate_levels(module_name_list, module_details_json):
 # Updates the extensions.JSON file with dependents of each standard library module
 def update_json_file(updated_json):
     try:
-        with open(EXTENSIONS_FILE, 'w') as json_file:
+        with open(constants.EXTENSIONS_FILE, 'w') as json_file:
             json_file.seek(0)
             json.dump(updated_json, json_file, indent=4)
             json_file.truncate()
@@ -185,27 +190,33 @@ def update_json_file(updated_json):
 
 # Creates a JSON string to store module information
 # returns: JSON with module details
-def initialize_module_details(module_name_list):
-    module_details_json = {'modules': []}
+def initialize_module_details(modules_list):
+    global auto_bump
+    global ballerina_version_regex
 
-    for module_name in module_name_list:
-        version = get_version(module_name["name"])
-        default_branch = get_default_branch(module_name["name"])
+    module_details_json = {
+        'auto_bump': auto_bump,
+        'lang_version_substring': ballerina_version_regex,
+        'modules': []
+    }
 
-        artifact_name = module_name["name"].split("-")[-1]
+    for module in modules_list:
+        default_branch = get_default_branch(module['name'])
 
-        default_artifact_id = artifact_name + "-ballerina"
-        default_version_key = "stdlib" + artifact_name.capitalize() + 'Version'
+        artifact_name = module['name'].split('-')[-1]
+
+        default_artifact_id = artifact_name + '-ballerina'
+        default_version_key = 'stdlib' + artifact_name.capitalize() + 'Version'
 
         module_details_json['modules'].append({
-            'name': module_name["name"],
-            'version': version,
+            'name': module['name'],
             'level': 0,
-            'group_id': module_name.get("group_id", 'org.ballerinalang'),
-            'artifact_id': module_name.get("artifact_id", default_artifact_id),
-            'version_key': module_name.get("version_key", default_version_key),
+            'group_id': module.get('group_id', 'org.ballerinalang'),
+            'artifact_id': module.get('artifact_id', default_artifact_id),
+            'version_key': module.get('version_key', default_version_key),
             'default_branch': default_branch,
-            'auto_merge': True,
+            'auto_merge': module.get('auto_merge', True),
+            'central_only_module': module.get('central_only_module', True),
             'dependents': []})
     # TODO: Add transitive dependencies
     return module_details_json
@@ -215,102 +226,35 @@ def initialize_module_details(module_name_list):
 # returns: module details JSON with updated dependent details
 def get_immediate_dependents(module_name_list, module_details_json):
     for module_name in module_name_list:
-        dependencies = get_dependencies(module_name["name"])
+        dependencies = get_dependencies(module_name['name'])
         for module in module_details_json['modules']:
             if module['name'] in dependencies:
                 module_details_json['modules'][module_details_json['modules'].index(module)]['dependents'].append(
-                    module_name["name"])
+                    module_name['name'])
 
     return module_details_json
 
 
-def commit_json_file():
-    author = InputGitAuthor(packageUser, packageEmail)
+def remove_modules_not_included_in_distribution(module_details_json):
+    removed_modules = []
 
-    repo = github.get_repo(BALLERINA_ORG_NAME + "/ballerina-release")
+    last_level = module_details_json['modules'][-1]['level']
 
-    remote_file = ""
-    try:
-        contents = repo.get_contents("dependabot")
-        while len(contents) > 0:
-            file_content = contents.pop(0)
-            if file_content.type == 'dir':
-                contents.extend(repo.get_contents(file_content.path))
-            else:
-                if file_content.path == EXTENSIONS_FILE:
-                    remote_file = file_content
-                    break
-    except Exception as e:
-        print("Error while accessing remote extensions.json", e)
-        sys.exit(1)
+    for module in module_details_json['modules']:
+        if (module['name'] != 'ballerina-distribution' and not module['dependents'] and
+                module['central_only_module']):
+            removed_modules.append(module)
 
-    updated_file = open(EXTENSIONS_FILE, 'r').read()
-    remote_file_contents = remote_file.decoded_content.decode("utf-8")
+    for removed_module in removed_modules:
+        module_details_json['modules'].remove(removed_module)
+        removed_module['level'] = last_level + 1
 
-    if updated_file == remote_file_contents:
-        print("No changes to extensions.json file")
-    else:
-        try:
-            base = repo.get_branch(repo.default_branch)
-            branch = EXTENSIONS_UPDATE_BRANCH
-            try:
-                ref = f"refs/heads/" + branch
-                repo.create_git_ref(ref=ref, sha=base.commit.sha)
-            except:
-                print("[Info] Unmerged update branch existed in 'ballerina-release'")
-                branch = EXTENSIONS_UPDATE_BRANCH + "_update_tmp"
-                ref = f"refs/heads/" + branch
-                try:
-                    repo.create_git_ref(ref=ref, sha=base.commit.sha)
-                except GithubException as e:
-                    print("[Info] deleting update tmp branch existed in 'ballerina-release'")
-                    if e.status == 422:  # already exist
-                        repo.get_git_ref("heads/" + branch).delete()
-                        repo.create_git_ref(ref=ref, sha=base.commit.sha)
-            repo.update_file(
-                EXTENSIONS_FILE,
-                "[Automated] Update Extensions Dependencies",
-                updated_file,
-                remote_file.sha,
-                branch=branch,
-                author=author
-            )
-            if not branch == EXTENSIONS_UPDATE_BRANCH:
-                update_branch = repo.get_git_ref("heads/" + EXTENSIONS_UPDATE_BRANCH)
-                update_branch.edit(update["commit"].sha, force=True)
-                repo.get_git_ref("heads/" + branch).delete()
+    for module in module_details_json['modules']:
+        module['central_only_module'] = False
 
-        except Exception as e:
-            print("Error while committing extensions.json", e)
+    module_details_json['central_modules'] = removed_modules
 
-        created_pr = ""
-        try:
-            created_pr = repo.create_pull(
-                title="[Automated] Update Extensions Dependencies",
-                body="Update dependencies in extensions.json",
-                head=EXTENSIONS_UPDATE_BRANCH,
-                base="master"
-            )
-        except Exception as e:
-            print("Error occurred while creating pull request updating dependencies.", e)
-            sys.exit(1)
-
-        # To stop intermittent failures due to API sync
-        time.sleep(5)
-
-        r_github = Github(reviewerPackagePAT)
-        repo = r_github.get_repo(BALLERINA_ORG_NAME + "/ballerina-release")
-        pr = repo.get_pull(created_pr.number)
-        try:
-            pr.create_review(event="APPROVE")
-        except Exception as e:
-            print("Error occurred while approving Update Extensions Dependencies PR", e)
-            sys.exit(1)
-
-        try:
-            created_pr.merge()
-        except Exception as e:
-            print("Error occurred while merging dependency PR for module 'ballerina-release'", e)
+    return module_details_json
 
 
 main()
