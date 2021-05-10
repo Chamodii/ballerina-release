@@ -61,12 +61,16 @@ def get_lang_version_lag():
 
 def update_lang_version():
     global ballerina_lang_version
+    global ballerina_timestamp
     repo = github.get_repo(constants.BALLERINA_ORG_NAME + "/ballerina-release")
     lang_version_file = repo.get_contents(constants.LANG_VERSION_FILE)
     lang_version_json = lang_version_file.decoded_content.decode(constants.ENCODING)
 
     data = json.loads(lang_version_json)
     ballerina_lang_version = data["version"]
+
+    lang_version = ballerina_lang_version.split("-")
+    ballerina_timestamp = create_timestamp(lang_version[2], lang_version[3])
 
 
 def days_hours_minutes(td):
@@ -117,8 +121,8 @@ def get_lag_info(module_name):
             timestamp_string = current_version.split("-")[2:4]
             timestamp = create_timestamp(timestamp_string[0], timestamp_string[1])
 
-    lang_version = ballerina_lang_version.split("-")
-    ballerina_timestamp = create_timestamp(lang_version[2], lang_version[3])
+    # lang_version = ballerina_lang_version.split("-")
+    # ballerina_timestamp = create_timestamp(lang_version[2], lang_version[3])
     update_timestamp = ballerina_timestamp - timestamp
     days, hrs = format_lag(update_timestamp)
 
@@ -175,8 +179,8 @@ def update_modules(updated_readme, module_details_list):
             else:
                 name = module[MODULE_NAME]
 
-            lag_button = get_lag_button(module[MODULE_NAME])
-            pending_pr = get_pending_pr(module[MODULE_NAME])
+            lag_button = get_lag_button(module)
+            pending_pr = get_pending_pr(module)
 
             level = ""
             if idx == 0:
@@ -218,9 +222,9 @@ def get_distribution_statement():
     if days > 0:
         distribution_lag = str(days) + " days"
     elif hrs > 0:
-        distribution_lag = str(hrs) + "h"
+        distribution_lag = str(hrs) + " h"
 
-    if distribution_lag:
+    if not distribution_lag:
         distribution_lag_statement = "`ballerina-distribution` repository is up to date."
     else:
         if str(distribution_pr_number) == "None":

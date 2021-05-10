@@ -4,14 +4,13 @@ import time
 import urllib.request
 
 from github import Github, InputGitAuthor, GithubException
-from retry import retry
 
 import constants
 
 ballerina_bot_username = os.environ[constants.ENV_BALLERINA_BOT_USERNAME]
 ballerina_bot_token = os.environ[constants.ENV_BALLERINA_BOT_TOKEN]
 ballerina_bot_email = os.environ[constants.ENV_BALLERINA_BOT_EMAIL]
-ballerina_reviewer_bot_token = os.environ[constants.ENV_BALLERINA_REVIEWER_BOT_TOKEN]
+# ballerina_reviewer_bot_token = os.environ[constants.ENV_BALLERINA_REVIEWER_BOT_TOKEN]
 
 github = Github(ballerina_bot_token)
 
@@ -26,12 +25,12 @@ def get_extensions_file():
     return module_list
 
 
-@retry(
-    urllib.error.URLError,
-    tries=constants.HTTP_REQUEST_RETRIES,
-    delay=constants.HTTP_REQUEST_DELAY_IN_SECONDS,
-    backoff=constants.HTTP_REQUEST_DELAY_MULTIPLIER
-)
+# @retry(
+#     urllib.error.URLError,
+#     tries=constants.HTTP_REQUEST_RETRIES,
+#     delay=constants.HTTP_REQUEST_DELAY_IN_SECONDS,
+#     backoff=constants.HTTP_REQUEST_DELAY_MULTIPLIER
+# )
 def open_url(url):
     request = urllib.request.Request(url)
     request.add_header("Accept", "application/vnd.github.v3+json")
@@ -66,7 +65,7 @@ def commit_file(repository_name, file_path, updated_file_content, commit_branch,
     try:
         author = InputGitAuthor(ballerina_bot_username, ballerina_bot_email)
 
-        repo = github.get_repo(constants.BALLERINA_ORG_NAME + '/' + repository_name)
+        repo = github.get_repo(constants.CHAMODI_ORG_NAME + '/' + repository_name)
 
         remote_file = repo.get_contents(file_path)
         remote_file_contents = remote_file.decoded_content.decode(constants.ENCODING)
