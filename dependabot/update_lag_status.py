@@ -7,6 +7,7 @@ from github import Github, GithubException
 
 import constants
 import utils
+import notify_diff
 
 ballerina_bot_token = os.environ[constants.ENV_BALLERINA_BOT_TOKEN]
 
@@ -34,6 +35,7 @@ def main():
                                    '[Automated] Update extension dependency dashboard')
         if update:
             print("Update available")
+            notify_diff.send_chat(update)
             # utils.open_pr_and_merge('ballerina-release',
             #                         '[Automated] Update Extension Dependency Dashboard',
             #                         'Update extension dependency dashboard',
