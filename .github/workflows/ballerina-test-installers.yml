@@ -4,12 +4,16 @@ on:
   pull_request:
     paths-ignore:
       - 'dependabot/**'
+      - 'README.md'
   push:
     branches-ignore:
-      - 'extension_update'
-      - 'extension_update_tmp'
+      - 'automated/extension_update'
+      - 'automated/extension_update_tmp'
+      - 'automated/dashboard_update'
+      - 'automated/dashboard_update_tmp'
     paths-ignore:
       - 'dependabot/**'
+      - 'README.md'
 
 jobs:
   installer-ubuntu-build:

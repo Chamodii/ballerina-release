@@ -7,7 +7,6 @@ from github import Github, GithubException
 
 import constants
 import utils
-import notify_diff
 
 ballerina_bot_token = os.environ[constants.ENV_BALLERINA_BOT_TOKEN]
 
@@ -31,15 +30,13 @@ def main():
     try:
         update = utils.commit_file('ballerina-release',
                                    README_FILE, updated_readme,
-                                   "dashboards",
+                                   constants.DASHBOARD_UPDATE_BRANCH,
                                    '[Automated] Update extension dependency dashboard')
         if update:
-            print("Update available")
-            notify_diff.send_chat(update)
-            # utils.open_pr_and_merge('ballerina-release',
-            #                         '[Automated] Update Extension Dependency Dashboard',
-            #                         'Update extension dependency dashboard',
-            #                         constants.DASHBOARD_UPDATE_BRANCH)
+            utils.open_pr_and_merge('ballerina-release',
+                                    '[Automated] Update Extension Dependency Dashboard',
+                                    'Update extension dependency dashboard',
+                                    constants.DASHBOARD_UPDATE_BRANCH)
         else:
             print('No changes to ' + README_FILE + ' file')
     except GithubException as e:
@@ -64,13 +61,9 @@ def get_lang_version_lag():
 def update_lang_version():
     global ballerina_lang_version
     global ballerina_timestamp
-    repo = github.get_repo(constants.BALLERINA_ORG_NAME + "/ballerina-release")
-    lang_version_file = repo.get_contents(constants.LANG_VERSION_FILE)
-    lang_version_json = lang_version_file.decoded_content.decode(constants.ENCODING)
 
-    data = json.loads(lang_version_json)
+    data = utils.read_json_file(constants.LANG_VERSION_FILE)
     ballerina_lang_version = data["version"]
-
     lang_version = ballerina_lang_version.split("-")
     ballerina_timestamp = create_timestamp(lang_version[2], lang_version[3])
 
@@ -123,8 +116,6 @@ def get_lag_info(module_name):
             timestamp_string = current_version.split("-")[2:4]
             timestamp = create_timestamp(timestamp_string[0], timestamp_string[1])
 
-    # lang_version = ballerina_lang_version.split("-")
-    # ballerina_timestamp = create_timestamp(lang_version[2], lang_version[3])
     update_timestamp = ballerina_timestamp - timestamp
     days, hrs = format_lag(update_timestamp)
 
@@ -236,8 +227,6 @@ def get_distribution_statement():
                 distribution_pr_number) + "](" + distribution_pr_link + ") is available"
 
     return distribution_lag_statement
-
-
 
 
 def get_updated_readme():
