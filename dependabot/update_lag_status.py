@@ -6,7 +6,7 @@ from datetime import datetime
 from github import Github, GithubException
 
 import constants
-import notify_chat
+# import notify_chat
 import utils
 
 ballerina_bot_token = os.environ[constants.ENV_BALLERINA_BOT_TOKEN]
@@ -16,15 +16,23 @@ README_FILE = "README.md"
 github = Github(ballerina_bot_token)
 
 all_modules = []
+lag_reminder_modules = []
 updated_modules = 0
 
 MODULE_NAME = "name"
 ballerina_timestamp = ""
 ballerina_lang_version = ""
+readme_file = ""
 
 
 def main():
+    global readme_file
     update_lang_version()
+
+    repo = github.get_repo(constants.BALLERINA_ORG_NAME + "/" + "ballerina-release")
+
+    readme_file = repo.get_contents(README_FILE)
+    readme_file = readme_file.decoded_content.decode(constants.ENCODING)
 
     updated_readme = get_updated_readme()
 
@@ -128,6 +136,9 @@ def get_lag_info(module_name):
 
 def get_lag_button(module):
     global updated_modules
+    global readme_file
+    color_order = {"brightgreen": 0, "yellow": 1, "red": 2}
+    color_change = False
     days, hrs, color = get_lag_info(module[MODULE_NAME])
     if days > 0:
         lag_status = str(days) + "%20days"
@@ -143,21 +154,29 @@ def get_lag_button(module):
     lag_button = "[![Lag](https://img.shields.io/badge/lag-" + lag_status + "-" + color + ")](" \
                  + lag_status_link + ")"
 
-    return lag_button
+    for line in readme_file.splitlines():
+        if module[MODULE_NAME] in line:
+            current_lag_color = line.split("|")[4].split("-")[2].split("?")[0]
+            if color_order[color] > color_order[current_lag_color]:
+                color_change = True
+
+    return lag_button, color_change
 
 
 def get_pending_pr(module):
+    pending_pr_status = False
     pr_id = ""
     pending_pr_link = ""
     pr_number = check_pending_pr_checks(module[MODULE_NAME])
 
     if pr_number is not None:
+        pending_pr_status = True
         pr_id = "#" + str(pr_number)
         pending_pr_link = "https://github.com/ballerina-platform/" + module[MODULE_NAME] + "/pull/" + str(
             pr_number)
     pending_pr = "[" + pr_id + "](" + pending_pr_link + ")"
 
-    return pending_pr
+    return pending_pr, pending_pr_status
 
 
 def update_modules(updated_readme, module_details_list):
@@ -174,8 +193,11 @@ def update_modules(updated_readme, module_details_list):
             else:
                 name = module[MODULE_NAME]
 
-            lag_button = get_lag_button(module)
-            pending_pr = get_pending_pr(module)
+            lag_button, color_change = get_lag_button(module)
+            pending_pr, pending_pr_status = get_pending_pr(module)
+
+            if color_change and pending_pr_status:
+                lag_reminder_modules.append[module[MODULE_NAME]]
 
             level = ""
             if idx == 0:
