@@ -29,20 +29,21 @@
             "pending_pr": "stdlibDistributionVersion"
         }
     ],
-    "central_modules": [
+"central_modules": [
         {
-            "name": "module-ballerinax-jaeger",
-            "levels": 9,
-            "build": "org.ballerinalang",
-            "lag": "jaeger-extension-ballerina",
-            "pending_pr": "observeExtJaegerVersion"
+                "name": "module-ballerinax-jaeger",
+                "levels": 9,
+                "build": "org.ballerinalang",
+                "lag": "jaeger-extension-ballerina",
+                "pending_pr": "observeExtJaegerVersion"
         },
         {
-            "name": "module-ballerinax-prometheus",
-            "levels": 9,
-            "build": "org.ballerinalang",
-            "lag": "prometheus-extension-ballerina",
-            "pending_pr": "observeExtPrometheusVersion"
+                "name": "module-ballerinax-prometheus",
+                "levels": 9,
+                "build": "org.ballerinalang",
+                "lag": "prometheus-extension-ballerina",
+                "pending_pr": "observeExtPrometheusVersion"
         }
+     ]
 }
       
