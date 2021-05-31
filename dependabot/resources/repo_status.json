@@ -1,1 +1,48 @@
-[{"levels":9,"module":"jaeger","build":"","lag":"","pendingPR":"#82"},{"levels":"","module":"prometheus","build":"","lag":"","pendingPR":"#82"},{"levels":"","module":"choreo","build":"","lag":"","pendingPR":"#86"}]
+{
+"modules": [
+        {
+            "name": "module-ballerina-docker",
+            "levels": 1,
+            "build": "org.ballerinax.docker",
+            "lag": "docker-generator",
+            "pending_pr": "dockerVersion"
+        },
+        {
+            "name": "module-ballerina-io",
+            "levels": 1,
+            "build": "org.ballerinalang",
+            "lag": "io-ballerina",
+            "pending_pr": "stdlibIoVersion"
+        },
+        {
+            "name": "module-ballerina-jballerina.java.arrays",
+            "levels": 1,
+            "build": "org.ballerinalang",
+            "lag": "jballerina.java.arrays-ballerina",
+            "pending_pr": "stdlibJavaArraysVersion"
+        },
+        {
+            "name": "ballerina-distribution",
+            "levels": 8,
+            "build": "org.ballerinalang",
+            "lag": "distribution-ballerina",
+            "pending_pr": "stdlibDistributionVersion"
+        }
+    ],
+    "central_modules": [
+        {
+            "name": "module-ballerinax-jaeger",
+            "levels": 9,
+            "build": "org.ballerinalang",
+            "lag": "jaeger-extension-ballerina",
+            "pending_pr": "observeExtJaegerVersion"
+        },
+        {
+            "name": "module-ballerinax-prometheus",
+            "levels": 9,
+            "build": "org.ballerinalang",
+            "lag": "prometheus-extension-ballerina",
+            "pending_pr": "observeExtPrometheusVersion"
+        }
+}
+      
