@@ -56,6 +56,16 @@
         "pending_pr": "https://github.com/ballerina-platform/module-ballerina-graphql/pull/262",
         "pending_pr_number": "#262"
     }
-    ]
+    ],
+"statements": [
+    {
+        "name": "ballerina-distribution",
+        "statement": "repository is up to date."
+    },
+    {
+        "name": "ballerina-lang",
+        "statement": "repository version <b>2.0.0-beta.1-20210531-110100-2fd74128</b> has been updated as follows"
+    }
+]
 }
       
