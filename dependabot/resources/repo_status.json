@@ -7,7 +7,7 @@
             "build": "passing",
             "build_color": "rgb(106,168,79)",
             "lag": "5 h",
-            "lag_color": "rgb(241,194,50)",
+            "lag_color": "red",
             "pending_pr": "https://github.com/ballerina-platform/module-ballerina-graphql/pull/262",
             "pending_pr_number": "#262"
         },
@@ -16,7 +16,7 @@
             "module_link": "https://github.com/ballerina-platform/module-ballerina-docker",
             "level": "",
             "build": "passing",
-            "build_color": "rgb(106,168,79)",
+            "build_color": "yellow",
             "lag": "4 days",
             "lag_color": "rgb(204,0,0)",
             "pending_pr": "https://github.com/ballerina-platform/module-ballerina-graphql/pull/262",
