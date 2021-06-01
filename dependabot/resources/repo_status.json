@@ -1,49 +1,61 @@
 {
 "modules": [
         {
-            "name": "module-ballerina-docker",
-            "levels": 1,
-            "build": "org.ballerinax.docker",
-            "lag": "docker-generator",
-            "pending_pr": "dockerVersion"
+            "name": "docker",
+            "module_link": "https://github.com/ballerina-platform/module-ballerina-docker",
+            "level": 1,
+            "build": "passing",
+            "build_color": "rgb(106,168,79)",
+            "lag": "5 h",
+            "lag_color": "rgb(241,194,50)",
+            "pending_pr": "https://github.com/ballerina-platform/module-ballerina-graphql/pull/262",
+            "pending_pr_number": "#262"
         },
         {
-            "name": "module-ballerina-io",
-            "levels": 1,
-            "build": "org.ballerinalang",
-            "lag": "io-ballerina",
-            "pending_pr": "stdlibIoVersion"
+            "name": "io",
+            "module_link": "https://github.com/ballerina-platform/module-ballerina-docker",
+            "level": "",
+            "build": "passing",
+            "build_color": "rgb(106,168,79)",
+            "lag": "4 days",
+            "lag_color": "rgb(204,0,0)",
+            "pending_pr": "https://github.com/ballerina-platform/module-ballerina-graphql/pull/262",
+            "pending_pr_number": "#262"
         },
         {
-            "name": "module-ballerina-jballerina.java.arrays",
-            "levels": 1,
-            "build": "org.ballerinalang",
-            "lag": "jballerina.java.arrays-ballerina",
-            "pending_pr": "stdlibJavaArraysVersion"
-        },
-        {
-            "name": "ballerina-distribution",
-            "levels": 8,
-            "build": "org.ballerinalang",
-            "lag": "distribution-ballerina",
-            "pending_pr": "stdlibDistributionVersion"
+            "name": "crypto",
+            "level": 2,
+            "build": "passing",
+            "build_color": "rgb(106,168,79)",
+            "lag": "4 days",
+            "lag_color": "rgb(204,0,0)",
+            "pending_pr": "https://github.com/ballerina-platform/module-ballerina-graphql/pull/262",
+            "pending_pr_number": "#262"
         }
     ],
 "central_modules": [
-        {
-                "name": "module-ballerinax-jaeger",
-                "levels": 9,
-                "build": "org.ballerinalang",
-                "lag": "jaeger-extension-ballerina",
-                "pending_pr": "observeExtJaegerVersion"
-        },
-        {
-                "name": "module-ballerinax-prometheus",
-                "levels": 9,
-                "build": "org.ballerinalang",
-                "lag": "prometheus-extension-ballerina",
-                "pending_pr": "observeExtPrometheusVersion"
-        }
-     ]
+    {
+        "name": "jaeger",
+        "module_link": "https://github.com/ballerina-platform/module-ballerina-docker",
+        "level": 9,
+        "build": "passing",
+        "build_color": "rgb(106,168,79)",
+        "lag": "5 h",
+        "lag_color": "rgb(241,194,50)",
+        "pending_pr": "https://github.com/ballerina-platform/module-ballerina-graphql/pull/262",
+        "pending_pr_number": "#262"
+    },
+    {
+        "name": "prometheus",
+        "module_link": "https://github.com/ballerina-platform/module-ballerina-docker",
+        "level": "",
+        "build": "passing",
+        "build_color": "rgb(106,168,79)",
+        "lag": "5 h",
+        "lag_color": "rgb(241,194,50)",
+        "pending_pr": "https://github.com/ballerina-platform/module-ballerina-graphql/pull/262",
+        "pending_pr_number": "#262"
+    }
+    ]
 }
       
