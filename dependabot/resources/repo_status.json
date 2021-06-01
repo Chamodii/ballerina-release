@@ -36,7 +36,7 @@
 "central_modules": [
     {
         "name": "jaeger",
-        "module_link": "https://github.com/ballerina-platform/module-ballerina-docker",
+        "module_link": "https://www.w3schools.com/jsref/dom_obj_attributes.asp",
         "level": 9,
         "build": "passing",
         "build_color": "rgb(106,168,79)",
