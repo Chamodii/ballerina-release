@@ -60,7 +60,7 @@
 "statements": [
     {
         "name": "ballerina-distribution",
-        "statement": "<code>ballerina-distribution</code> repository is upto date."
+        "statement": "repository is upto date."
     },
     {
         "name": "ballerina-lang",
