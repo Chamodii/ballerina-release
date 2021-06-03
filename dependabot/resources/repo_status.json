@@ -18,7 +18,7 @@
             "build": "passing",
             "build_color": "yellow",
             "lag": "4 days",
-            "lag_color": "#7d2216",
+            "lag_color": "#a82b1b",
             "pending_pr": "https://github.com/ballerina-platform/module-ballerina-graphql/pull/262",
             "pending_pr_number": "#262"
         },
@@ -28,7 +28,7 @@
             "build": "passing",
             "build_color": "green",
             "lag": "4 days",
-            "lag_color": "#7d2216",
+            "lag_color": "#a82b1b",
             "pending_pr": "https://github.com/ballerina-platform/module-ballerina-graphql/pull/262",
             "pending_pr_number": "#262"
         }
